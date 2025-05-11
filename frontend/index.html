@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8" />
+  <title>SIP.js Test</title>
+  <script src="./sip.min.js"></script>
+</head>
+<body>
+  <h1>SIP.js Test Client</h1>
+  <button id="register">Register</button>
+  <button id="call">Call</button>
+  <button id="hangup">Hang Up</button>
+  <script>
+    const { UserAgent, Inviter, Registerer } = SIP;
+    let userAgent, registerer, inviter;
+
+    const uri = UserAgent.makeURI("sip:alice@localhost");
+    const transportOptions = {
+      server: "ws://localhost:5066"
+    };
+
+    userAgent = new UserAgent({
+      uri,
+      transportOptions,
+      authorizationUsername: "alice",
+
+    });
+
+    document.getElementById("register").onclick = async () => {
+      await userAgent.start();
+      registerer = new Registerer(userAgent, {
+        expires: 600
+      });
+      await registerer.register();
+      console.log("Registered");
+    };
+
+    document.getElementById("call").onclick = async () => {
+      const target = UserAgent.makeURI("sip:bob@localhost");
+      inviter = new Inviter(userAgent, target);
+      await inviter.invite();
+      console.log("Call started");
+    };
+
+    document.getElementById("hangup").onclick = async () => {
+      if (inviter) {
+        await inviter.bye();
+        console.log("Call ended");
+      }
+    };
+  </script>
+</body>
+</html>
+
