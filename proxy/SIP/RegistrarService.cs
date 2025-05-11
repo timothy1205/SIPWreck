@@ -10,7 +10,7 @@ namespace SIPWreck.SIP
         IConfiguration config
     ) : IHostedService, IDisposable
     {
-        private class DateTimeComparer : IComparer<DateTime>
+        private sealed class DateTimeComparer : IComparer<DateTime>
         {
             public int Compare(DateTime x, DateTime y)
             {
